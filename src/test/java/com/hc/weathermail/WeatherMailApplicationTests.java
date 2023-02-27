@@ -108,24 +108,14 @@ class WeatherMailApplicationTests {
                 for (Hourly hourly : newHourList) {
                     if (hourly.getText().equals(WeatherEnum.B.getCode())){
                         resHourly=hourly;
+                        System.out.println("下雨天气："+hourly);
                         break;
                     }
                 }
             }
             System.out.println(resHourly);
         }
-
     }
-
-
-
-
-
-
-
-
-
-
 
     private RestTemplate getTemplate(){
         // 添加拦截器，使用 gzip 编码提交
