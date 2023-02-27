@@ -26,7 +26,7 @@ import java.util.List;
 @Slf4j
 public class StaticScheduleTask {
     /*
-    每天早上7点55执行，如果未来14个小时内下雨，则推送几点下雨
+    每天早上7点55执行，如果未来14个小时内下雨，也就是到晚上11点，则推送几点下雨
      */
     @Scheduled(cron = "0 55 70 * * ?")
     public void heFengHourWeather() {
