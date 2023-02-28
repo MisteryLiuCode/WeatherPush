@@ -1,6 +1,7 @@
 package com.hc.weathermail.schedule;
 
 import cn.hutool.extra.mail.MailUtil;
+import com.hc.weathermail.annotation.PrintLog;
 import com.hc.weathermail.entity.*;
 import com.hc.weathermail.utils.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class StaticScheduleTask {
     /*
     每天早上7点55执行，如果未来14个小时内下雨，也就是到晚上11点，则推送几点下雨
      */
+    @PrintLog
     @Scheduled(cron = "0 55 07 * * ?")
     public void heFengHourWeather() {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
@@ -57,6 +59,7 @@ public class StaticScheduleTask {
     }
 
     //晚上6点到明天晚上6点如果有雨,提醒下班带伞
+    @PrintLog
     @Scheduled(cron = "0 30 17 * * ?")
     public void heFengWeather() {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
