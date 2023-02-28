@@ -43,7 +43,7 @@ public class StaticScheduleTask {
             if (hourlyList != null) {
                 List<Hourly> newHourList = hourlyList.subList(0, 15);
                 for (Hourly hourly : newHourList) {
-                    if (hourly.getText().equals(WeatherEnum.B.getCode())) {
+                    if (hourly.getText().contains(WeatherEnum.B.getCode())) {
                         // 发送邮件
                         StringBuilder sb = new StringBuilder();
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
@@ -57,7 +57,6 @@ public class StaticScheduleTask {
             }
         }
     }
-
     //晚上6点到明天晚上6点如果有雨,提醒下班带伞
     @PrintLog
     @Scheduled(cron = "0 30 17 * * ?")
@@ -71,7 +70,7 @@ public class StaticScheduleTask {
             List<Hourly> hourlyList = res.getBody().getHourly();
             if (hourlyList != null) {
                 for (Hourly hourly : hourlyList) {
-                    if (hourly.getText().equals(WeatherEnum.B.getCode())) {
+                    if (hourly.getText().contains(WeatherEnum.B.getCode())) {
                         // 发送邮件
                         StringBuilder sb = new StringBuilder();
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
@@ -85,6 +84,4 @@ public class StaticScheduleTask {
             }
         }
     }
-
-
 }
