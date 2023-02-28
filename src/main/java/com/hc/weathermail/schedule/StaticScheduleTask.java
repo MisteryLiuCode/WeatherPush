@@ -28,13 +28,13 @@ public class StaticScheduleTask {
     /*
     每天早上7点55执行，如果未来14个小时内下雨，也就是到晚上11点，则推送几点下雨
      */
-    @Scheduled(cron = "0 55 70 * * ?")
+    @Scheduled(cron = "0 55 07 * * ?")
     public void heFengHourWeather() {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
         if (weatherConfig != null) {
             log.info("开始执行定时任务,查询早上8点到晚上11点是否下雨");
-            RestTemplate restTemplate = getTemplate();
-            String resUrl = getHourResUrl(weatherConfig);
+            RestTemplate restTemplate = ConfigUtil.getTemplate();
+            String resUrl = ConfigUtil.getHourResUrl(weatherConfig);
             String to = weatherConfig.getString("toZpr");
             ResponseEntity<HeFengWeatherHourVO> res = restTemplate.getForEntity(resUrl, HeFengWeatherHourVO.class);
             List<Hourly> hourlyList = res.getBody().getHourly();
@@ -61,8 +61,8 @@ public class StaticScheduleTask {
     public void heFengWeather() {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
         if (weatherConfig != null) {
-            RestTemplate restTemplate = getTemplate();
-            String resUrl = getHourResUrl(weatherConfig);
+            RestTemplate restTemplate = ConfigUtil.getTemplate();
+            String resUrl = ConfigUtil.getHourResUrl(weatherConfig);
             String to = weatherConfig.getString("toZpr");
             ResponseEntity<HeFengWeatherHourVO> res = restTemplate.getForEntity(resUrl, HeFengWeatherHourVO.class);
             List<Hourly> hourlyList = res.getBody().getHourly();
@@ -83,61 +83,5 @@ public class StaticScheduleTask {
         }
     }
 
-
-    private RestTemplate getTemplate() {
-        // 添加拦截器，使用 gzip 编码提交
-        ClientHttpRequestInterceptor interceptor = (httpRequest, bytes, execution) -> {
-            httpRequest.getHeaders().set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");
-            httpRequest.getHeaders().set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-            httpRequest.getHeaders().set(HttpHeaders.ACCEPT_ENCODING, "gzip");   // 使用 gzip 编码提交
-            return execution.execute(httpRequest, bytes);
-        };
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build());
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
-        restTemplate.getInterceptors().add(interceptor);
-        return restTemplate;
-    }
-
-    /**
-     * description: 逐小时天气url
-     *
-     * @param weatherConfig
-     * @return java.lang.String
-     */
-    private String getHourResUrl(Configuration weatherConfig) {
-        String url = weatherConfig.getString("HourUrl");
-        String key = weatherConfig.getString("key");
-        String cityid = weatherConfig.getString("FuZhouCityId");
-        // 准备参数
-        String resUrl = url + "?" + "location=" + cityid +
-                "&" + "key=" + key;
-        return resUrl;
-    }
-
-    private String getTomorrowHourResUrl(Configuration weatherConfig) {
-        String url = weatherConfig.getString("TomorrowUrl");
-        String key = weatherConfig.getString("key");
-        String cityid = weatherConfig.getString("FuZhouCityId");
-        // 准备参数
-        String resUrl = url + "?" + "location=" + cityid +
-                "&" + "key=" + key;
-        return resUrl;
-    }
-
-    /**
-     * description: 每日天气url
-     *
-     * @param weatherConfig
-     * @return java.lang.String
-     */
-    private String getDayResUrl(Configuration weatherConfig) {
-        String url = weatherConfig.getString("DayUrl");
-        String key = weatherConfig.getString("key");
-        String cityid = weatherConfig.getString("FuZhouCityId");
-        // 准备参数
-        String resUrl = url + "?" + "location=" + cityid +
-                "&" + "key=" + key;
-        return resUrl;
-    }
 
 }

@@ -22,25 +22,6 @@ import java.util.List;
 @SpringBootTest
 class WeatherMailApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
-
-    /**
-     * 测试获取配置信息
-     */
-    @Test
-    public void testGetConfig() {
-        Configuration weatherConfig = ConfigUtil.getWeatherConfig();
-        if (weatherConfig != null) {
-            System.out.println(weatherConfig.getString("url"));
-            System.out.println(weatherConfig.getString("to"));
-            System.out.println(weatherConfig.getString("appid"));
-            System.out.println(weatherConfig.getString("appsecret"));
-            System.out.println(weatherConfig.getString("cityid"));
-        }
-    }
-
     /**
      * 测试获取天气信息
      */
