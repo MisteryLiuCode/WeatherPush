@@ -32,19 +32,18 @@ public class StaticScheduleTask {
     public void heFengHourWeather() {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
         if (weatherConfig != null) {
+            log.info("开始执行定时任务,查询早上8点到晚上11点是否下雨");
             RestTemplate restTemplate = getTemplate();
             String resUrl = getHourResUrl(weatherConfig);
             String to = weatherConfig.getString("toZpr");
             ResponseEntity<HeFengWeatherHourVO> res = restTemplate.getForEntity(resUrl, HeFengWeatherHourVO.class);
             List<Hourly> hourlyList = res.getBody().getHourly();
-            //获取8点到11点的天气数据
             if (hourlyList != null) {
                 List<Hourly> newHourList = hourlyList.subList(0, 15);
                 for (Hourly hourly : newHourList) {
                     if (hourly.getText().equals(WeatherEnum.B.getCode())) {
                         // 发送邮件
                         StringBuilder sb = new StringBuilder();
-//                        SimpleDateFormat df_12=new SimpleDateFormat("hh");
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
                         sb.append("预计").append(simpleDateFormat.format(hourly.getFxTime())).append("点会下雨，")
                                 .append("出门记得带伞：");
@@ -57,7 +56,7 @@ public class StaticScheduleTask {
         }
     }
 
-    //下班前20分钟如果还在下雨或者明天有雨，推送消息，今天和明天都不下雨不推送。
+    //晚上6点到明天晚上6点如果有雨,提醒下班带伞
     @Scheduled(cron = "0 30 17 * * ?")
     public void heFengWeather() {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
@@ -67,43 +66,18 @@ public class StaticScheduleTask {
             String to = weatherConfig.getString("toZpr");
             ResponseEntity<HeFengWeatherHourVO> res = restTemplate.getForEntity(resUrl, HeFengWeatherHourVO.class);
             List<Hourly> hourlyList = res.getBody().getHourly();
-            //获取8点到11点的天气数据
             if (hourlyList != null) {
-                List<Hourly> newHourList = hourlyList.subList(0, 15);
-                for (Hourly hourly : newHourList) {
+                for (Hourly hourly : hourlyList) {
                     if (hourly.getText().equals(WeatherEnum.B.getCode())) {
                         // 发送邮件
                         StringBuilder sb = new StringBuilder();
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
                         sb.append("预计").append(simpleDateFormat.format(hourly.getFxTime())).append("点会下雨，")
-                                .append("记得带伞：");
+                                .append("记得下班把伞带回去");
                         log.info("邮件内容：" + sb.toString());
                         MailUtil.send(to, "天气情况", sb.toString(), false);
                         break;
                     }
-                }
-            }
-        }
-    }
-
-
-    @Scheduled(cron = "0 30 17 * * ?")
-    public void heFengTomorrowWeather() {
-        log.info("开始获取明天天气信息");
-        Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
-        if (weatherConfig != null) {
-            RestTemplate restTemplate = getTemplate();
-            String resUrl = getTomorrowHourResUrl(weatherConfig);
-            String to = weatherConfig.getString("toZpr");
-            ResponseEntity<TomorrowWeatherVO> res = restTemplate.getForEntity(resUrl, TomorrowWeatherVO.class);
-            List<Daily> dailyList = res.getBody().getDaily();
-            if (dailyList != null) {
-                if (dailyList.get(0).getTextDay().equals(WeatherEnum.B.getCode())) {
-                    // 发送邮件
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("预计明天会下雨，记得下班把伞带回去");
-                    log.info("邮件内容：" + sb.toString());
-                    MailUtil.send(to, "天气情况", sb.toString(), false);
                 }
             }
         }
@@ -133,7 +107,7 @@ public class StaticScheduleTask {
     private String getHourResUrl(Configuration weatherConfig) {
         String url = weatherConfig.getString("HourUrl");
         String key = weatherConfig.getString("key");
-        String cityid = weatherConfig.getString("BeiJingCityid");
+        String cityid = weatherConfig.getString("FuZhouCityId");
         // 准备参数
         String resUrl = url + "?" + "location=" + cityid +
                 "&" + "key=" + key;
@@ -143,7 +117,7 @@ public class StaticScheduleTask {
     private String getTomorrowHourResUrl(Configuration weatherConfig) {
         String url = weatherConfig.getString("TomorrowUrl");
         String key = weatherConfig.getString("key");
-        String cityid = weatherConfig.getString("BeiJingCityid");
+        String cityid = weatherConfig.getString("FuZhouCityId");
         // 准备参数
         String resUrl = url + "?" + "location=" + cityid +
                 "&" + "key=" + key;
