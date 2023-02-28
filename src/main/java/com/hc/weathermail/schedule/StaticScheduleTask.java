@@ -63,6 +63,7 @@ public class StaticScheduleTask {
     public void heFengWeather() {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
         if (weatherConfig != null) {
+            log.info("开始执行定时任务,查询下午6点到明天晚上6点是否有雨");
             RestTemplate restTemplate = ConfigUtil.getTemplate();
             String resUrl = ConfigUtil.getHourResUrl(weatherConfig);
             String to = weatherConfig.getString("toZpr");
