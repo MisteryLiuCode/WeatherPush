@@ -6,6 +6,7 @@ import com.hc.weathermail.entity.*;
 import com.hc.weathermail.utils.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,8 +18,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 
@@ -47,7 +50,7 @@ public class StaticScheduleTask {
                         // 发送邮件
                         StringBuilder sb = new StringBuilder();
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
-                        sb.append("预计").append(simpleDateFormat.format(hourly.getFxTime())).append("点会下雨，")
+                        sb.append("预计").append(simpleDateFormat.format(hourly.getFxTime())).append("点开始下雨，")
                                 .append("出门记得带伞：");
                         log.info("邮件内容：" + sb.toString());
                         MailUtil.send(to, "天气情况", sb.toString(), false);
@@ -67,6 +70,9 @@ public class StaticScheduleTask {
             RestTemplate restTemplate = ConfigUtil.getTemplate();
             String resUrl = ConfigUtil.getHourResUrl(weatherConfig);
             String to = weatherConfig.getString("toZpr");
+            //获取当前时间
+            SimpleDateFormat nowSdf = new SimpleDateFormat("dd");// 格式化时间
+            String nowDay = nowSdf.format(new Date());
             ResponseEntity<HeFengWeatherHourVO> res = restTemplate.getForEntity(resUrl, HeFengWeatherHourVO.class);
             List<Hourly> hourlyList = res.getBody().getHourly();
             if (hourlyList != null) {
@@ -74,10 +80,13 @@ public class StaticScheduleTask {
                     if (hourly.getText().contains(WeatherEnum.B.getCode())) {
                         // 发送邮件
                         StringBuilder sb = new StringBuilder();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
-                        sb.append("预计").append(simpleDateFormat.format(hourly.getFxTime())).append("点会下雨，")
-                                .append("记得下班把伞带回去");
-                        log.info("邮件内容：" + sb.toString());
+                        SimpleDateFormat hourDateFormat = new SimpleDateFormat("HH");
+                        //下雨时间与当前时间比较
+                        String rainDay = nowSdf.format(hourly.getFxTime());
+                        String rain = rainDay.equals(nowDay) ? "今天" : "明天";
+                        sb.append("预计").append(rain).append(hourDateFormat.format(hourly.getFxTime())).append("点开始下雨，")
+                                .append("下班记得带伞");
+                        log.info("邮件内容：" + sb);
                         MailUtil.send(to, "天气情况", sb.toString(), false);
                         break;
                     }

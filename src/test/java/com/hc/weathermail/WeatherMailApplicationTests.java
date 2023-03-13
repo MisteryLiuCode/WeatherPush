@@ -3,6 +3,7 @@ package com.hc.weathermail;
 import cn.hutool.json.JSON;
 import com.hc.weathermail.entity.*;
 import com.hc.weathermail.utils.ConfigUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONObject;
@@ -15,10 +16,12 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
-
+@Slf4j
 @SpringBootTest
 class WeatherMailApplicationTests {
 
@@ -83,10 +86,16 @@ class WeatherMailApplicationTests {
             ResponseEntity<HeFengWeatherHourVO> res = restTemplate.getForEntity(resUrl, HeFengWeatherHourVO.class);
             List<Hourly> hourlyList = res.getBody().getHourly();
             Hourly resHourly = new Hourly();
+//            获取当前时间
+            SimpleDateFormat nowSdf = new SimpleDateFormat("dd");// 格式化时间
+            String nowDay = nowSdf.format(new Date());
             //获取8点到11点的天气数据
             if (hourlyList!=null){
                 List<Hourly> newHourList = hourlyList.subList(0, 15);
                 for (Hourly hourly : newHourList) {
+                    String rainDay = nowSdf.format(hourly.getFxTime());
+                    String rain = rainDay.equals(nowDay) ? "今天" : "明天";
+                    log.info("比较时间结果"+rain);
                     if (hourly.getText().equals(WeatherEnum.B.getCode())){
                         resHourly=hourly;
                         System.out.println("下雨天气："+hourly);
