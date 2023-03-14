@@ -13,11 +13,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -29,6 +33,10 @@ import java.util.List;
 @EnableScheduling
 @Slf4j
 public class StaticScheduleTask {
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
     /*
     每天早上7点55执行，如果未来14个小时内下雨，也就是到晚上11点，则推送几点下雨
      */
@@ -58,8 +66,41 @@ public class StaticScheduleTask {
                     }
                 }
             }
+            /*
+             查询天气温度是否波动很大
+             1.查询今天天气,与昨天天气比较,如果温差大于10度,则发送消息
+             2.把今天的天气入库,作为明天比较对象
+             */
+            String tomorrowResUrl = ConfigUtil.getTomorrowResUrl(weatherConfig);
+            ResponseEntity<TomorrowWeatherVO> tomorrowRes = restTemplate.getForEntity(tomorrowResUrl, TomorrowWeatherVO.class);
+            List<Daily> dailyList = tomorrowRes.getBody().getDaily();
+            if (dailyList != null) {
+//                今日天气
+                Daily toDay = dailyList.get(0);
+//                昨日天气
+                RowMapper<Daily> rowMapper = new BeanPropertyRowMapper<>(Daily.class);
+                List<Daily> dailies = jdbcTemplate.query("select * from t_today_weather order by add_time desc", rowMapper);
+                if (dailies != null) {
+                    Daily yesterday = dailies.get(0);
+//                    判断两天的温差
+                    Integer difTemp = Integer.parseInt(yesterday.getTempMax()) - Integer.parseInt(toDay.getTempMax());
+                    log.info("今天和昨天温差为{}度", difTemp);
+                    if (Math.abs(difTemp) > 9) {
+                        String msg = difTemp > 0 ? "今天降温了,注意保暖" : "今天升温了,可以穿凉快点";
+                        log.info("邮件内容：" + msg);
+                        MailUtil.send(to, "天气温差变化", msg, false);
+                    }
+                }
+//                今日天气入库
+                String sql = "INSERT INTO t_today_weather VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+                int update = jdbcTemplate.update(sql, null, toDay.getFxDate(), toDay.getTempMax(),
+                        toDay.getTempMin(), toDay.getTextDay(), toDay.getWindDirDay(), toDay.getWindScaleDay(),
+                        new Date(), new Date(), "定时插入今日天气", 1);
+                log.info("插入成功{}条当日天气数据", update);
+            }
         }
     }
+
     //晚上6点到明天晚上6点如果有雨,提醒下班带伞
     @PrintLog
     @Scheduled(cron = "0 30 17 * * ?")

@@ -1,2 +1,8 @@
 server:
-  port: 8050
+  port: 49030
+spring:
+  datasource:
+    url: jdbc:mysql://101.43.145.108:3306/weather?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: weather
+    password: l198923.

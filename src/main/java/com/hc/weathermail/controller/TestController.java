@@ -42,7 +42,7 @@ public class TestController {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
         if (weatherConfig != null) {
             RestTemplate restTemplate = ConfigUtil.getTemplate();
-            String resUrl = ConfigUtil.getTomorrowHourResUrl(weatherConfig);
+            String resUrl = ConfigUtil.getTomorrowResUrl(weatherConfig);
             String to = weatherConfig.getString("toLsb");
             ResponseEntity<TomorrowWeatherVO> res = restTemplate.getForEntity(resUrl, TomorrowWeatherVO.class);
             List<Daily> dailyList = res.getBody().getDaily();

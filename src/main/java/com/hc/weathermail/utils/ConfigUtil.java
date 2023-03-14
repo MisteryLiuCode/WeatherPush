@@ -69,7 +69,7 @@ public class ConfigUtil {
         return resUrl;
     }
 
-    public static String getTomorrowHourResUrl(Configuration weatherConfig) {
+    public static String getTomorrowResUrl(Configuration weatherConfig) {
         String url = weatherConfig.getString("TomorrowUrl");
         String key = weatherConfig.getString("key");
         String cityid = weatherConfig.getString("FuZhouCityId");
