@@ -38,7 +38,7 @@ public class TestController {
     @PrintLog
     @GetMapping("/hello")
     public String heFengTomorrowWeather() {
-        log.info("开始获取明天天气信息");
+        log.info("开始获取今天天气信息");
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
         if (weatherConfig != null) {
             RestTemplate restTemplate = ConfigUtil.getTemplate();
