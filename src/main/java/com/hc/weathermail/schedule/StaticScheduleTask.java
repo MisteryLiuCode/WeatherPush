@@ -83,10 +83,10 @@ public class StaticScheduleTask {
                 if (dailies != null) {
                     Daily yesterday = dailies.get(0);
 //                    判断两天的温差
-                    Integer difTemp = Integer.parseInt(yesterday.getTempMax()) - Integer.parseInt(toDay.getTempMax());
+                    Integer difTemp = Integer.parseInt(toDay.getTempMax()) - Integer.parseInt(yesterday.getTempMax());
                     log.info("今天和昨天温差为{}度", difTemp);
                     if (Math.abs(difTemp) > 9) {
-                        String msg = difTemp > 0 ? "今天降温了,注意保暖" : "今天升温了,可以穿凉快点";
+                        String msg = difTemp > 0 ? "今天升温了,可以穿凉快点":"今天降温了,注意保暖";
                         log.info("邮件内容：" + msg);
                         MailUtil.send(to, "天气温差变化", msg, false);
                     }
@@ -96,7 +96,7 @@ public class StaticScheduleTask {
                 int update = jdbcTemplate.update(sql, null, toDay.getFxDate(), toDay.getTempMax(),
                         toDay.getTempMin(), toDay.getTextDay(), toDay.getWindDirDay(), toDay.getWindScaleDay(),
                         new Date(), new Date(), "定时插入今日天气", 1);
-                log.info("插入成功{}条当日天气数据", update);
+                log.info("成功插入{}条当日天气数据", update);
             }
         }
     }
