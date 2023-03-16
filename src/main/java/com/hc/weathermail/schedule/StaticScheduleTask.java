@@ -4,6 +4,7 @@ import cn.hutool.extra.mail.MailUtil;
 import com.hc.weathermail.annotation.PrintLog;
 import com.hc.weathermail.entity.*;
 import com.hc.weathermail.utils.ConfigUtil;
+import com.hc.weathermail.utils.SendSmsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
@@ -62,6 +63,12 @@ public class StaticScheduleTask {
                                 .append("出门记得带伞");
                         log.info("邮件内容：" + sb.toString());
                         MailUtil.send(to, "天气情况", sb.toString(), false);
+                        //                发送短信
+                        String toDayWeatherId = weatherConfig.getString("goWorkRainId");
+                        String liuAddressee = weatherConfig.getString("zprAddressee");
+                        String[] addressee=new String[]{liuAddressee};
+                        String[] args= {simpleDateFormat.format(hourly.getFxTime())};
+                        SendSmsUtil.sendSms(toDayWeatherId,addressee,args);
                         break;
                     }
                 }
@@ -89,6 +96,12 @@ public class StaticScheduleTask {
                         String msg = difTemp > 0 ? "今天升温了,可以穿凉快点":"今天降温了,注意保暖";
                         log.info("邮件内容：" + msg);
                         MailUtil.send(to, "天气温差变化", msg, false);
+//                        发送短信
+                        String liuAddressee = weatherConfig.getString("liuAddressee");
+                        String[] addressee=new String[]{liuAddressee};
+                        String[] args= {toDay.getTempMax()};
+                        String templateId = difTemp > 0?weatherConfig.getString("heatUpId"):weatherConfig.getString("HeatDownId");
+                        SendSmsUtil.sendSms(templateId,addressee,args);
                     }
                 }
 //                今日天气入库
@@ -129,6 +142,12 @@ public class StaticScheduleTask {
                                 .append("下班记得带伞");
                         log.info("邮件内容：" + sb);
                         MailUtil.send(to, "天气情况", sb.toString(), false);
+                        //                        发送短信
+                        String liuAddressee = weatherConfig.getString("liuAddressee");
+                        String offWordRainId = weatherConfig.getString("offWordRainId");
+                        String[] addressee=new String[]{liuAddressee};
+                        String[] args= {rain,hourDateFormat.format(hourly.getFxTime())};
+                        SendSmsUtil.sendSms(offWordRainId,addressee,args);
                         break;
                     }
                 }
