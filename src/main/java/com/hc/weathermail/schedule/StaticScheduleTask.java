@@ -59,7 +59,7 @@ public class StaticScheduleTask {
                         StringBuilder sb = new StringBuilder();
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
                         sb.append("预计").append(simpleDateFormat.format(hourly.getFxTime())).append("点开始下雨，")
-                                .append("出门记得带伞：");
+                                .append("出门记得带伞");
                         log.info("邮件内容：" + sb.toString());
                         MailUtil.send(to, "天气情况", sb.toString(), false);
                         break;

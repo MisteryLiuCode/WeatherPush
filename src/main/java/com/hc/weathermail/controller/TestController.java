@@ -6,6 +6,7 @@ import com.hc.weathermail.entity.Daily;
 import com.hc.weathermail.entity.TomorrowWeatherVO;
 import com.hc.weathermail.entity.WeatherEnum;
 import com.hc.weathermail.utils.ConfigUtil;
+import com.hc.weathermail.utils.SendSmsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,12 @@ public class TestController {
                 sb.append("今日天气:").append(dailyList.get(0).getTextDay());
                 log.info("邮件内容：" + sb.toString());
                 MailUtil.send(to, "天气情况", sb.toString(), false);
+//                发送短信
+                String toDayWeatherId = weatherConfig.getString("toDayWeatherId");
+                String liuAddressee = weatherConfig.getString("liuAddressee");
+                String[] addressee=new String[]{liuAddressee};
+                String[] args= {dailyList.get(0).getTextDay()};
+                SendSmsUtil.sendSms(toDayWeatherId,addressee,args);
             }
             return "hello world";
         }

@@ -2,6 +2,7 @@ package com.hc.weathermail;
 
 import com.hc.weathermail.entity.*;
 import com.hc.weathermail.utils.ConfigUtil;
+import com.hc.weathermail.utils.SendSmsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -28,6 +29,61 @@ class WeatherMailApplicationTests {
     @Resource
     private JdbcTemplate jdbcTemplate;
 
+    private RestTemplate getTemplate() {
+        // 添加拦截器，使用 gzip 编码提交
+        ClientHttpRequestInterceptor interceptor = (httpRequest, bytes, execution) -> {
+            httpRequest.getHeaders().set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");
+            httpRequest.getHeaders().set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            httpRequest.getHeaders().set(HttpHeaders.ACCEPT_ENCODING, "gzip");   // 使用 gzip 编码提交
+            return execution.execute(httpRequest, bytes);
+        };
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build());
+        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+        restTemplate.getInterceptors().add(interceptor);
+        return restTemplate;
+    }
+
+    /**
+     * description: 逐小时天气url
+     *
+     * @param weatherConfig
+     * @return java.lang.String
+     */
+    private String getHourResUrl(Configuration weatherConfig) {
+        String url = weatherConfig.getString("HourUrl");
+        String key = weatherConfig.getString("key");
+        String cityid = weatherConfig.getString("BeiJingCityid");
+        // 准备参数
+        String resUrl = url + "?" + "location=" + cityid +
+                "&" + "key=" + key;
+        return resUrl;
+    }
+
+    /**
+     * description: 每日天气url
+     *
+     * @param weatherConfig
+     * @return java.lang.String
+     */
+    private String getDayResUrl(Configuration weatherConfig) {
+        String url = weatherConfig.getString("DayUrl");
+        String key = weatherConfig.getString("key");
+        String cityid = weatherConfig.getString("FuZhouCityId");
+        // 准备参数
+        String resUrl = url + "?" + "location=" + cityid +
+                "&" + "key=" + key;
+        return resUrl;
+    }
+
+    public static String getTomorrowResUrl(Configuration weatherConfig) {
+        String url = weatherConfig.getString("TomorrowUrl");
+        String key = weatherConfig.getString("key");
+        String cityid = weatherConfig.getString("FuZhouCityId");
+        // 准备参数
+        String resUrl = url + "?" + "location=" + cityid +
+                "&" + "key=" + key;
+        return resUrl;
+    }
     /**
      * 测试获取天气信息
      */
@@ -149,61 +205,13 @@ class WeatherMailApplicationTests {
         }
     }
 
-
-    private RestTemplate getTemplate() {
-        // 添加拦截器，使用 gzip 编码提交
-        ClientHttpRequestInterceptor interceptor = (httpRequest, bytes, execution) -> {
-            httpRequest.getHeaders().set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");
-            httpRequest.getHeaders().set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-            httpRequest.getHeaders().set(HttpHeaders.ACCEPT_ENCODING, "gzip");   // 使用 gzip 编码提交
-            return execution.execute(httpRequest, bytes);
-        };
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build());
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
-        restTemplate.getInterceptors().add(interceptor);
-        return restTemplate;
+    @Test
+    public void sendTencentSms(){
+        Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
+        String templateId = weatherConfig.getString("toDayWeatherId");
+        String liuAddressee = weatherConfig.getString("liuAddressee");
+        String[] addressee=new String[]{liuAddressee};
+        String[] args= {"20"};
+        SendSmsUtil.sendSms(templateId,addressee,args);
     }
-
-    /**
-     * description: 逐小时天气url
-     *
-     * @param weatherConfig
-     * @return java.lang.String
-     */
-    private String getHourResUrl(Configuration weatherConfig) {
-        String url = weatherConfig.getString("HourUrl");
-        String key = weatherConfig.getString("key");
-        String cityid = weatherConfig.getString("BeiJingCityid");
-        // 准备参数
-        String resUrl = url + "?" + "location=" + cityid +
-                "&" + "key=" + key;
-        return resUrl;
-    }
-
-    /**
-     * description: 每日天气url
-     *
-     * @param weatherConfig
-     * @return java.lang.String
-     */
-    private String getDayResUrl(Configuration weatherConfig) {
-        String url = weatherConfig.getString("DayUrl");
-        String key = weatherConfig.getString("key");
-        String cityid = weatherConfig.getString("FuZhouCityId");
-        // 准备参数
-        String resUrl = url + "?" + "location=" + cityid +
-                "&" + "key=" + key;
-        return resUrl;
-    }
-
-    public static String getTomorrowResUrl(Configuration weatherConfig) {
-        String url = weatherConfig.getString("TomorrowUrl");
-        String key = weatherConfig.getString("key");
-        String cityid = weatherConfig.getString("FuZhouCityId");
-        // 准备参数
-        String resUrl = url + "?" + "location=" + cityid +
-                "&" + "key=" + key;
-        return resUrl;
-    }
-
 }
