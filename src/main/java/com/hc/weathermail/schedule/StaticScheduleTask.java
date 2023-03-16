@@ -97,7 +97,7 @@ public class StaticScheduleTask {
                         log.info("邮件内容：" + msg);
                         MailUtil.send(to, "天气温差变化", msg, false);
 //                        发送短信
-                        String liuAddressee = weatherConfig.getString("liuAddressee");
+                        String liuAddressee = weatherConfig.getString("zprAddressee");
                         String[] addressee=new String[]{liuAddressee};
                         String[] args= {toDay.getTempMax()};
                         String templateId = difTemp > 0?weatherConfig.getString("heatUpId"):weatherConfig.getString("HeatDownId");
@@ -143,7 +143,7 @@ public class StaticScheduleTask {
                         log.info("邮件内容：" + sb);
                         MailUtil.send(to, "天气情况", sb.toString(), false);
                         //                        发送短信
-                        String liuAddressee = weatherConfig.getString("liuAddressee");
+                        String liuAddressee = weatherConfig.getString("zprAddressee");
                         String offWordRainId = weatherConfig.getString("offWordRainId");
                         String[] addressee=new String[]{liuAddressee};
                         String[] args= {rain,hourDateFormat.format(hourly.getFxTime())};
