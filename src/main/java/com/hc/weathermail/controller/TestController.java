@@ -57,7 +57,7 @@ public class TestController {
                 String toDayWeatherId = weatherConfig.getString("toDayWeatherId");
                 String liuAddressee = weatherConfig.getString("liuAddressee");
                 String[] addressee=new String[]{liuAddressee};
-                String[] args= {dailyList.get(0).getTextDay()};
+                String[] args= {dailyList.get(0).getTextDay(),dailyList.get(0).getTempMax()};
                 SendSmsUtil.sendSms(toDayWeatherId,addressee,args);
             }
             return "hello world";
