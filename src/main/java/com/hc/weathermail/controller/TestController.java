@@ -54,11 +54,11 @@ public class TestController {
                 log.info("邮件内容：" + sb.toString());
                 MailUtil.send(to, "天气情况", sb.toString(), false);
 //                发送短信
-                String toDayWeatherId = weatherConfig.getString("toDayWeatherId");
-                String liuAddressee = weatherConfig.getString("liuAddressee");
-                String[] addressee=new String[]{liuAddressee};
-                String[] args= {dailyList.get(0).getTextDay(),dailyList.get(0).getTempMax()};
-                SendSmsUtil.sendSms(toDayWeatherId,addressee,args);
+//                String toDayWeatherId = weatherConfig.getString("toDayWeatherId");
+//                String liuAddressee = weatherConfig.getString("liuAddressee");
+//                String[] addressee=new String[]{liuAddressee};
+//                String[] args= {dailyList.get(0).getTextDay(),dailyList.get(0).getTempMax()};
+//                SendSmsUtil.sendSms(toDayWeatherId,addressee,args);
             }
             return "hello world";
         }
