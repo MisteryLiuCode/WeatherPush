@@ -1,6 +1,7 @@
 package com.hc.weathermail.schedule;
 
 import cn.hutool.extra.mail.MailUtil;
+import com.alibaba.fastjson.JSON;
 import com.hc.weathermail.annotation.PrintLog;
 import com.hc.weathermail.entity.*;
 import com.hc.weathermail.utils.ConfigUtil;
@@ -60,7 +61,7 @@ public class StaticScheduleTask {
                         StringBuilder sb = new StringBuilder();
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
                         sb.append("预计").append(simpleDateFormat.format(hourly.getFxTime())).append("点开始下雨，")
-                                .append("出门记得带伞");
+                                .append("出门之前收衣服，记得带伞");
                         log.info("邮件内容：" + sb.toString());
                         MailUtil.send(to, "天气情况", sb.toString(), false);
                         //                发送短信
@@ -111,6 +112,8 @@ public class StaticScheduleTask {
                         new Date(), new Date(), "定时插入今日天气", 1);
                 log.info("成功插入{}条当日天气数据", update);
             }
+//            查询预警，发送邮件及短信
+            warningMsg(weatherConfig,restTemplate,to);
         }
     }
 
@@ -139,7 +142,7 @@ public class StaticScheduleTask {
                         String rainDay = nowSdf.format(hourly.getFxTime());
                         String rain = rainDay.equals(nowDay) ? "今天" : "明天";
                         sb.append("预计").append(rain).append(hourDateFormat.format(hourly.getFxTime())).append("点开始下雨，")
-                                .append("下班记得带伞");
+                                .append("下班回去收衣服，记得带伞");
                         log.info("邮件内容：" + sb);
                         MailUtil.send(to, "天气情况", sb.toString(), false);
                         //                        发送短信
@@ -151,6 +154,37 @@ public class StaticScheduleTask {
                         break;
                     }
                 }
+            }
+            //            查询预警，发送邮件及短信
+            warningMsg(weatherConfig,restTemplate,to);
+        }
+    }
+
+//    查询预警天气，发送短信和邮件
+    public void warningMsg(Configuration weatherConfig,RestTemplate restTemplate,String to){
+                    /*
+            查询预警天气
+             */
+        String warningUrl = ConfigUtil.getWarningUrl(weatherConfig);
+        ResponseEntity<WarningVO> warningRes = restTemplate.getForEntity(warningUrl, WarningVO.class);
+        log.info(JSON.toJSONString(warningRes.getBody().getWarning()));
+        List<Warning> warningList = warningRes.getBody().getWarning();
+        if (warningList.size()>0){
+            for (Warning warning : warningList) {
+                //发送邮件
+                StringBuilder sb = new StringBuilder();
+                sb.append("天气预警（记得收衣服）")
+                        .append(warning.getTypeName()).append("天气，")
+                        .append(warning.getLevel()).append("预警，")
+                        .append("详细信息：").append(warning.getText());
+                log.info("邮件内容：" + sb.toString());
+                MailUtil.send(to, "天气预警", sb.toString(), false);
+                //                发送短信
+                String toDayWeatherId = weatherConfig.getString("warning");
+                String liuAddressee = weatherConfig.getString("zprAddressee");
+                String[] addressee=new String[]{liuAddressee};
+                String[] args= {warning.getTypeName(),warning.getLevel(),warning.getText()};
+                SendSmsUtil.sendSms(toDayWeatherId,addressee,args);
             }
         }
     }

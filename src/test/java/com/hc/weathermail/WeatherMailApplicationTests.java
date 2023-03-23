@@ -1,5 +1,7 @@
 package com.hc.weathermail;
 
+import com.alibaba.fastjson.JSON;
+import com.google.gson.JsonObject;
 import com.hc.weathermail.entity.*;
 import com.hc.weathermail.utils.ConfigUtil;
 import com.hc.weathermail.utils.SendSmsUtil;
@@ -84,6 +86,7 @@ class WeatherMailApplicationTests {
                 "&" + "key=" + key;
         return resUrl;
     }
+
     /**
      * 测试获取天气信息
      */
@@ -183,35 +186,70 @@ class WeatherMailApplicationTests {
             String tomorrowResUrl = ConfigUtil.getTomorrowResUrl(weatherConfig);
             ResponseEntity<TomorrowWeatherVO> tomorrowRes = restTemplate.getForEntity(tomorrowResUrl, TomorrowWeatherVO.class);
             List<Daily> dailyList = tomorrowRes.getBody().getDaily();
-            if (dailyList!=null){
+            if (dailyList != null) {
                 Daily toDay = dailyList.get(0);
                 //                获取昨日天气
                 RowMapper<Daily> rowMapper = new BeanPropertyRowMapper<>(Daily.class);
-                List<Daily> dailies = jdbcTemplate.query("select * from t_today_weather order by add_time desc",rowMapper);
-                if (dailies!=null) {
+                List<Daily> dailies = jdbcTemplate.query("select * from t_today_weather order by add_time desc", rowMapper);
+                if (dailies != null) {
                     Daily yesterday = dailies.get(0);
 //                    判断两天的温差
                     Integer difTemp = Integer.parseInt(yesterday.getTempMax()) - Integer.parseInt(toDay.getTempMax());
-                    log.info("两天温差为{}度",difTemp);
+                    log.info("两天温差为{}度", difTemp);
                 }
                 //                今天的天气入库
-                String sql="INSERT INTO t_today_weather VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+                String sql = "INSERT INTO t_today_weather VALUES(?,?,?,?,?,?,?,?,?,?,?)";
                 //影响的行数
-                int update = jdbcTemplate.update(sql,null,toDay.getFxDate(),toDay.getTempMax(),
-                        toDay.getTempMin(),toDay.getTextDay(),toDay.getWindDirDay(),toDay.getWindScaleDay(),
-                        new Date(),new Date(),"定时插入今日天气",1);
-                log.info("插入成功{}条天气数据",update);
+                int update = jdbcTemplate.update(sql, null, toDay.getFxDate(), toDay.getTempMax(),
+                        toDay.getTempMin(), toDay.getTextDay(), toDay.getWindDirDay(), toDay.getWindScaleDay(),
+                        new Date(), new Date(), "定时插入今日天气", 1);
+                log.info("插入成功{}条天气数据", update);
             }
         }
     }
 
+    /*
+    测试发送消息
+     */
     @Test
-    public void sendTencentSms(){
+    public void sendTencentSms() {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
         String templateId = weatherConfig.getString("toDayWeatherId");
         String liuAddressee = weatherConfig.getString("liuAddressee");
-        String[] addressee=new String[]{liuAddressee};
-        String[] args= {"20"};
-        SendSmsUtil.sendSms(templateId,addressee,args);
+        String[] addressee = new String[]{liuAddressee};
+        String[] args = {"20"};
+        SendSmsUtil.sendSms(templateId, addressee, args);
+    }
+
+    /*
+    获取预警信息
+     */
+    @Test
+    public void getWarningWeather() {
+        Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
+        if (weatherConfig != null) {
+            // 添加拦截器，使用 gzip 编码提交
+            ClientHttpRequestInterceptor interceptor = (httpRequest, bytes, execution) -> {
+                httpRequest.getHeaders().set("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");
+                httpRequest.getHeaders().set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+                httpRequest.getHeaders().set(HttpHeaders.ACCEPT_ENCODING, "gzip");   // 使用 gzip 编码提交
+                return execution.execute(httpRequest, bytes);
+            };
+            HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build());
+            RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+            restTemplate.getInterceptors().add(interceptor);
+
+            String url = weatherConfig.getString("warningUrl");
+            String key = weatherConfig.getString("key");
+            String cityid = weatherConfig.getString("FuZhouCityId");
+            // 使用restTemplate发送请求
+//        RestTemplate restTemplate = new RestTemplate();
+            // 准备参数
+            String resUrl = url + "?" + "location=" + cityid +
+                    "&" + "lang=zh" +
+                    "&" + "key=" + key;
+            ResponseEntity<WarningVO> res = restTemplate.getForEntity(resUrl, WarningVO.class);
+            log.info(JSON.toJSONString(res.getBody().getWarning()));
+        }
     }
 }

@@ -79,6 +79,20 @@ public class ConfigUtil {
         return resUrl;
     }
 
+    public static String getWarningUrl(Configuration weatherConfig) {
+        String url = weatherConfig.getString("warningUrl");
+        String key = weatherConfig.getString("key");
+        String cityid = weatherConfig.getString("FuZhouCityId");
+        // 使用restTemplate发送请求
+//        RestTemplate restTemplate = new RestTemplate();
+        // 准备参数
+        String resUrl = url + "?" + "location=" + cityid +
+                "&" + "lang=zh" +
+                "&" + "key=" + key;
+        return resUrl;
+    }
+
+
     /**
      * description: 每日天气url
      *
