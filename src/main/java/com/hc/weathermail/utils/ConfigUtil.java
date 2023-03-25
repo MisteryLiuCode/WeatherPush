@@ -15,13 +15,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * @author: houcheng
- * @date: 2021/7/24 16:03
- * @version: V1.0
- * @description: 读取配置文件信息
- * @modify:
- */
 @Slf4j
 public class ConfigUtil {
 

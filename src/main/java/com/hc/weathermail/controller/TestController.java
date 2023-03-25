@@ -17,14 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-
-/**
- * @author: houcheng
- * @date: 2021/7/21 11:16
- * @version: V1.0
- * @description: 测试程序是否启动
- * @modify:
- */
 @RestController
 @Slf4j
 public class TestController {

@@ -94,7 +94,7 @@ public class StaticScheduleTask {
                     Integer difTemp = Integer.parseInt(toDay.getTempMax()) - Integer.parseInt(yesterday.getTempMax());
                     log.info("今天和昨天温差为{}度", difTemp);
                     if (Math.abs(difTemp) > 9) {
-                        String msg = difTemp > 0 ? "今天升温了,可以穿凉快点":"今天降温了,注意保暖";
+                        String msg = difTemp > 0 ? "今天和昨天温差为"+difTemp+"度，升温了,可以穿凉快点":"今天和昨天温差为"+difTemp+"度，降温了,注意保暖";
                         log.info("邮件内容：" + msg);
                         MailUtil.send(to, "天气温差变化", msg, false);
 //                        发送短信
