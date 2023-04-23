@@ -113,7 +113,7 @@ public class StaticScheduleTask {
                 log.info("成功插入{}条当日天气数据", update);
             }
 //            查询预警，发送邮件及短信
-            warningMsg(weatherConfig,restTemplate,to);
+//            warningMsg(weatherConfig,restTemplate,to);
         }
     }
 
