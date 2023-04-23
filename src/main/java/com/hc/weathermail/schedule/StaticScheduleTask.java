@@ -156,7 +156,7 @@ public class StaticScheduleTask {
                 }
             }
             //            查询预警，发送邮件及短信
-            warningMsg(weatherConfig,restTemplate,to);
+//            warningMsg(weatherConfig,restTemplate,to);
         }
     }
 
