@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.liu.weathermail.dao.SendUserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.liu.weathermail.entity.SendUserEntity" id="sendUserMap">
+        <result property="id" column="id"/>
+        <result property="sendMail" column="send_mail"/>
+        <result property="sendPassword" column="send_password"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <insert id="insertUser" parameterType="com.liu.weathermail.entity.SendUserEntity">
+        insert into send_user (id, send_mail, send_password,
+                               nick_name,create_time, update_time)
+        values (null, #{sendMail,jdbcType=VARCHAR}, #{sendPassword,jdbcType=INTEGER},
+                #{nickName,jdbcType=DECIMAL},#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+
+
+</mapper>

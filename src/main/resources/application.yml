@@ -6,3 +6,9 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     username: weather
     password: l198923.
+mybatis:
+  type-aliases-package: com.liu.weathermail.entity
+  configuration:
+    cacheEnabled: false
+    # 一定要设置，避免个别SQL执行时间过长，把系统搞跨
+    default-statement-timeout: 5
