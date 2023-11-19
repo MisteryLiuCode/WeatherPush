@@ -31,6 +31,9 @@ public class UserServiceImpl implements UserService {
     @Resource
     private RecUserDao recUserDao;
 
+    @Resource
+    private WeatherServiceImpl weatherService;
+
     @Override
 
     public Boolean saveUser(SaveUserInfoReq req) {
@@ -53,6 +56,8 @@ public class UserServiceImpl implements UserService {
         recUserEntity.setUpdateTime(new Date());
         recUserEntity.setStatus(StatusEnum.Y.getCode());
         int insertRec = recUserDao.insert(recUserEntity);
+
+        weatherService.saveTodayWeather(sendUserEntity.getId(),req.getCityCode());
         return insertSend == 1 && insertRec == 1;
     }
 }

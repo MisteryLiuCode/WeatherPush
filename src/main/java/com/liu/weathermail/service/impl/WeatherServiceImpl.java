@@ -3,6 +3,7 @@ package com.liu.weathermail.service.impl;
 import cn.hutool.extra.mail.MailUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.liu.weathermail.dao.DailyDao;
+import com.liu.weathermail.dao.RecUserDao;
 import com.liu.weathermail.entity.*;
 import com.liu.weathermail.entity.req.WeatherReq;
 import com.liu.weathermail.enums.StatusEnum;
@@ -36,6 +37,10 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Resource
     private DailyDao dailyDao;
+
+    @Resource
+    private RecUserDao recUserDao;
+
 
     @Override
     public Boolean getWeather(WeatherReq req) {
@@ -81,16 +86,12 @@ public class WeatherServiceImpl implements WeatherService {
             if (dailyList != null) {
                 //                今日天气
                 Daily toDay = dailyList.get(0);
-                //                昨日天气
-                RowMapper<Daily> rowMapper = new BeanPropertyRowMapper<>(Daily.class);
 
                 QueryWrapper<DailyEntity> wrapper = new QueryWrapper<>();
                 wrapper.eq("city_code",req.getCityCode())
                         .orderByDesc("create_time")
                         .eq("rec_id",req.getRecId());
                 List<DailyEntity> dailyEntities = dailyDao.selectList(wrapper);
-//                List<Daily> dailies = jdbcTemplate.query("select * from t_today_weather order by add_time desc",
-//                        rowMapper);
                 DailyEntity yesterday = dailyEntities.get(0);
                 if (!CollectionUtils.isEmpty(dailyEntities)) {
                     //                    判断两天的温差
@@ -112,28 +113,47 @@ public class WeatherServiceImpl implements WeatherService {
                         SendSmsUtil.sendSms(templateId, addressee, args);
                     }
                 }
-                //                今日天气入库
-//                String sql = "INSERT INTO t_today_weather VALUES(?,?,?,?,?,?,?,?,?,?,?)";
-//                int update = jdbcTemplate.update(sql, null, toDay.getFxDate(), toDay.getTempMax(), toDay.getTempMin(),
-//                        toDay.getTextDay(), toDay.getWindDirDay(), toDay.getWindScaleDay(), new Date(), new Date(),
-//                        "定时插入今日天气", 1);
-                DailyEntity dailyEntity = new DailyEntity();
-                dailyEntity.setRecId(yesterday.getRecId());
-                dailyEntity.setFxDate(toDay.getFxDate());
-                dailyEntity.setCityCode(req.getCityCode());
-                dailyEntity.setTempMax(toDay.getTempMax());
-                dailyEntity.setTempMin(toDay.getTempMin());
-                dailyEntity.setTextDay(toDay.getTextDay());
-                dailyEntity.setWindDirDay(toDay.getWindDirDay());
-                dailyEntity.setWindScaleDay(toDay.getWindScaleDay());
-                dailyEntity.setStatus(StatusEnum.Y.getCode());
-                dailyEntity.setCreateTime(new Date());
-                dailyEntity.setUpdateTime(new Date());
-                dailyEntity.setRemark("定时插入今日天气");
-                int insert = dailyDao.insert(dailyEntity);
-                log.info("成功插入{}条当日天气数据", insert);
+                //今日天气入库
+                saveTodayWeather(req.getRecId(),req.getCityCode());
             }
         }
         return true;
+    }
+
+    /**
+     * 新用户入库
+     *
+     * @param recId
+ * @param cityId
+     * @return void
+     * @since 2023/11/19 18:48 by misteryliu
+     **/
+    public void saveTodayWeather(String recId,String cityId) {
+        Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
+        RestTemplate restTemplate = ConfigUtil.getTemplate();
+        String tomorrowResUrl = ConfigUtil.getTomorrowResUrl(weatherConfig);
+        ResponseEntity<TomorrowWeatherVO> tomorrowRes = restTemplate.getForEntity(tomorrowResUrl,
+                TomorrowWeatherVO.class);
+        List<Daily> dailyList = tomorrowRes.getBody().getDaily();
+        if (dailyList != null) {
+            //                今日天气
+            Daily toDay = dailyList.get(0);
+            //                今日天气入库
+            DailyEntity dailyEntity = new DailyEntity();
+            dailyEntity.setRecId(recId);
+            dailyEntity.setFxDate(toDay.getFxDate());
+            dailyEntity.setCityCode(cityId);
+            dailyEntity.setTempMax(toDay.getTempMax());
+            dailyEntity.setTempMin(toDay.getTempMin());
+            dailyEntity.setTextDay(toDay.getTextDay());
+            dailyEntity.setWindDirDay(toDay.getWindDirDay());
+            dailyEntity.setWindScaleDay(toDay.getWindScaleDay());
+            dailyEntity.setStatus(StatusEnum.Y.getCode());
+            dailyEntity.setCreateTime(new Date());
+            dailyEntity.setUpdateTime(new Date());
+            dailyEntity.setRemark("定时插入今日天气");
+            int insert = dailyDao.insert(dailyEntity);
+            log.info("成功插入{}条当日天气数据", insert);
+        }
     }
 }

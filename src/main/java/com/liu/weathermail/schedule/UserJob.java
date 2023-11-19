@@ -55,7 +55,5 @@ public class UserJob {
                 weatherService.getWeather(weatherReq);
             }
         }
-
-
     }
 }
