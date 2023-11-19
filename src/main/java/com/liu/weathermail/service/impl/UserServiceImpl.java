@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         sendUserEntity.setNickName(req.getSendMail());
         sendUserEntity.setCreateTime(new Date());
         sendUserEntity.setUpdateTime(new Date());
-        int insertSend = sendUserDao.insertUser(sendUserEntity);
+        int insertSend = sendUserDao.insert(sendUserEntity);
 
         RecUserEntity recUserEntity = new RecUserEntity();
         recUserEntity.setSendId(sendUserEntity.getId());

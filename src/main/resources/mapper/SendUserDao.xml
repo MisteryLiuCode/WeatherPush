@@ -13,9 +13,9 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.liu.weathermail.entity.SendUserEntity">
-        insert into send_user (id, send_mail, send_password,
+        insert into send_user (send_mail, send_password,
                                nick_name,create_time, update_time)
-        values (null, #{sendMail,jdbcType=VARCHAR}, #{sendPassword,jdbcType=INTEGER},
+        values (#{sendMail,jdbcType=VARCHAR}, #{sendPassword,jdbcType=INTEGER},
                 #{nickName,jdbcType=DECIMAL},#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
 
