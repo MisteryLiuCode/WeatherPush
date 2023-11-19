@@ -1,5 +1,7 @@
 package com.liu.weathermail.schedule;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.liu.weathermail.annotation.PrintLog;
 import com.liu.weathermail.dao.SendUserDao;
 import com.liu.weathermail.entity.po.UserInfoPO;
@@ -9,6 +11,7 @@ import java.util.List;
 
 import com.liu.weathermail.entity.req.WeatherReq;
 import com.liu.weathermail.service.WeatherService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,6 +26,7 @@ import org.springframework.util.CollectionUtils;
  */
 @EnableScheduling
 @Component
+@Slf4j
 public class UserJob {
 
     @Resource
@@ -42,6 +46,7 @@ public class UserJob {
     @PrintLog
     public void getUserInfo(){
         List<UserInfoPO> userInfoPOS = sendUserDao.selectUserInfo();
+        log.info("要执行的用户集合:{}", JSONObject.toJSONString(userInfoPOS));
         if (!CollectionUtils.isEmpty(userInfoPOS)){
             for (UserInfoPO userInfoPO : userInfoPOS) {
                 WeatherReq weatherReq = new WeatherReq();

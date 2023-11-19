@@ -126,7 +126,7 @@ public class WeatherServiceImpl implements WeatherService {
      * @param recId
  * @param cityId
      * @return void
-     * @since 2023/11/19 18:48 by misteryliu
+     * @since 2023/11/19 18:56 by misteryliu
      **/
     public void saveTodayWeather(String recId,String cityId) {
         Configuration weatherConfig = ConfigUtil.getHeFengWeatherConfig();
