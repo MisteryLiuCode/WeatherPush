@@ -38,7 +38,7 @@ public class UserJob {
      * @return void
      * @since 2023/11/19 13:54 by misteryliu
      **/
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 */1 * * * ?")
     @PrintLog
     public void getUserInfo(){
         List<UserInfoPO> userInfoPOS = sendUserDao.selectUserInfo();

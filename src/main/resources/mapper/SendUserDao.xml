@@ -43,7 +43,7 @@
         from send_user as s
                           left join rec_user as r
                                     on s.id=r.send_id
-        where s.status=1 and r.status=1 and r.rec_time &lt;now()
+        where s.status=1 and r.status=1 and r.rec_time = now()
     </select>
 
 
