@@ -34,13 +34,12 @@ public class UserServiceImpl implements UserService {
 
     public Boolean saveUser(SaveUserInfoReq req) {
         SendUserEntity sendUserEntity = new SendUserEntity();
-        sendUserEntity.setId(UUID.randomUUID().toString());
         sendUserEntity.setSendMail(req.getSendMail());
         sendUserEntity.setSendPassword(req.getSendMail());
         sendUserEntity.setNickName(req.getSendMail());
         sendUserEntity.setCreateTime(new Date());
         sendUserEntity.setUpdateTime(new Date());
-        int insertSend = sendUserDao.insert(sendUserEntity);
+        int insertSend = sendUserDao.insertUser(sendUserEntity);
 
         RecUserEntity recUserEntity = new RecUserEntity();
         recUserEntity.setSendId(sendUserEntity.getId());
