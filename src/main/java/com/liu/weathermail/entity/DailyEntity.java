@@ -23,7 +23,7 @@ public class DailyEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Integer id;
+	private String id;
 	/**
 	 * 
 	 */
@@ -43,19 +43,19 @@ public class DailyEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private String winddirday;
+	private String windDirDay;
 	/**
 	 * 
 	 */
-	private String windscaleday;
+	private String windScaleDay;
 	/**
 	 * 
 	 */
-	private Date addtime;
+	private Date createTime;
 	/**
 	 * 
 	 */
-	private Date updatetime;
+	private Date updateTime;
 	/**
 	 * 
 	 */
@@ -63,7 +63,7 @@ public class DailyEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private Integer unknown;
+	private String status;
 	/**
 	 * 
 	 */

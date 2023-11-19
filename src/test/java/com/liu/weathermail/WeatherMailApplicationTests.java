@@ -2,6 +2,8 @@ package com.liu.weathermail;
 
 import com.alibaba.fastjson.JSON;
 import com.liu.weathermail.entity.*;
+import com.liu.weathermail.entity.req.WeatherReq;
+import com.liu.weathermail.service.impl.WeatherServiceImpl;
 import com.liu.weathermail.utils.ConfigUtil;
 import com.liu.weathermail.utils.SendSmsUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -29,6 +32,9 @@ class WeatherMailApplicationTests {
 
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    @Resource
+    private WeatherServiceImpl weatherService;
 
     private RestTemplate getTemplate() {
         // 添加拦截器，使用 gzip 编码提交
@@ -250,5 +256,17 @@ class WeatherMailApplicationTests {
             ResponseEntity<WarningVO> res = restTemplate.getForEntity(resUrl, WarningVO.class);
             log.info(JSON.toJSONString(res.getBody().getWarning()));
         }
+    }
+
+    @Test
+    public void testWeatherJob(){
+        WeatherReq weatherReq = new WeatherReq();
+        weatherReq.setCityCode("101010100");
+        weatherReq.setSendEmail("632755976@qq.com");
+        weatherReq.setRecName("接收人名称");
+        weatherReq.setRecEmail("632755976@qq.com");
+        Boolean weather = weatherService.getWeather(weatherReq);
+        log.info("查询天气发送信息结果：{}",weather);
+
     }
 }

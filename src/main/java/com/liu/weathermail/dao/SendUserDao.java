@@ -2,7 +2,10 @@ package com.liu.weathermail.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.liu.weathermail.entity.SendUserEntity;
+import com.liu.weathermail.entity.po.UserInfoPO;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * 
@@ -15,5 +18,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface SendUserDao extends BaseMapper<SendUserEntity> {
 
     int insertUser(SendUserEntity sendUser);
+
+    List<UserInfoPO> selectUserInfo();
 	
 }

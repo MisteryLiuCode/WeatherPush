@@ -29,6 +29,12 @@ public class WeatherJob {
 
     @Resource
     private JdbcTemplate jdbcTemplate;
+    
+
+    
+    
+    
+    
 
     /*
     每天早上7点55执行，如果未来14个小时内下雨，也就是到晚上11点，则推送几点下雨
