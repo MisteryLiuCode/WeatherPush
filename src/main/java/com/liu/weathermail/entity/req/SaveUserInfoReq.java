@@ -2,6 +2,8 @@ package com.liu.weathermail.entity.req;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * All rights Reserved, Designed By misteryliu. 保存用户信息
  *
@@ -36,6 +38,11 @@ public class SaveUserInfoReq {
     接收人手机号码
      */
     private String recPhone;
+
+    /*
+    接收人收到消息时间
+     */
+    private Date recTime;
 
     /*
     城市码

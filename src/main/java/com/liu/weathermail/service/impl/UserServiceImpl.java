@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
         recUserEntity.setRecPhone(req.getRecPhone());
         recUserEntity.setCityCode(req.getCityCode());
         recUserEntity.setCityName(req.getCityName());
+        recUserEntity.setRecTime(req.getRecTime());
         recUserEntity.setCreateTime(new Date());
         recUserEntity.setUpdateTime(new Date());
         int insertRec = recUserDao.insert(recUserEntity);
