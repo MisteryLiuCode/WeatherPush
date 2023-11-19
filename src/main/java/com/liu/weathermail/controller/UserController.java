@@ -30,7 +30,6 @@ public class UserController {
     @PrintLog
     @RequestMapping("/saveUserInfo")
     public Boolean saveUserInfo(@RequestBody SaveUserInfoReq saveUserInfoReq){
-        saveUserInfoReq.setRecTime(new Date());
         return userService.saveUser(saveUserInfoReq);
     }
 }

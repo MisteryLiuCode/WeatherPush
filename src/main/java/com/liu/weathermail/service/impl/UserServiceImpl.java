@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         recUserEntity.setStatus(StatusEnum.Y.getCode());
         int insertRec = recUserDao.insert(recUserEntity);
 
-        weatherService.saveTodayWeather(sendUserEntity.getId(),req.getCityCode());
+        weatherService.saveTodayWeather(recUserEntity.getId(),req.getCityCode());
         return insertSend == 1 && insertRec == 1;
     }
 }

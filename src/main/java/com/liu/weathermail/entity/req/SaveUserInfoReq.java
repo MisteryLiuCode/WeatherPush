@@ -25,9 +25,9 @@ public class SaveUserInfoReq {
     private String sendPassword;
 
     /*
-    昵称
+    接收人昵称
      */
-    private String nickName;
+    private String recName;
 
     /*
     接收人邮箱
