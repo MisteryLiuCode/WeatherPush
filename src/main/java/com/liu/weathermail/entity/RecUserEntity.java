@@ -56,5 +56,9 @@ public class RecUserEntity implements Serializable {
 	 * 更新时间
 	 */
 	private Date updateTime;
+	/*
+	 * 数据状态
+	 */
+	private String status;
 
 }

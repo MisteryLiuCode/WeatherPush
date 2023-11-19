@@ -44,5 +44,9 @@ public class SendUserEntity implements Serializable {
 	 * 
 	 */
 	private Date updateTime;
+	/**
+	 *
+	 */
+	private String status;
 
 }

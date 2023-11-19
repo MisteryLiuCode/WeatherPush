@@ -25,7 +25,7 @@ import java.util.List;
 @Component
 @EnableScheduling
 @Slf4j
-public class StaticScheduleTask {
+public class WeatherJob {
 
     @Resource
     private JdbcTemplate jdbcTemplate;

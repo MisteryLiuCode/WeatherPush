@@ -5,6 +5,7 @@ import com.liu.weathermail.dao.SendUserDao;
 import com.liu.weathermail.entity.RecUserEntity;
 import com.liu.weathermail.entity.SendUserEntity;
 import com.liu.weathermail.entity.req.SaveUserInfoReq;
+import com.liu.weathermail.enums.StatusEnum;
 import com.liu.weathermail.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class UserServiceImpl implements UserService {
         sendUserEntity.setNickName(req.getSendMail());
         sendUserEntity.setCreateTime(new Date());
         sendUserEntity.setUpdateTime(new Date());
+        sendUserEntity.setStatus(StatusEnum.Y.getCode());
         int insertSend = sendUserDao.insert(sendUserEntity);
 
         RecUserEntity recUserEntity = new RecUserEntity();
@@ -50,6 +52,7 @@ public class UserServiceImpl implements UserService {
         recUserEntity.setRecTime(req.getRecTime());
         recUserEntity.setCreateTime(new Date());
         recUserEntity.setUpdateTime(new Date());
+        recUserEntity.setStatus(StatusEnum.Y.getCode());
         int insertRec = recUserDao.insert(recUserEntity);
         return insertSend == 1 && insertRec == 1;
     }
