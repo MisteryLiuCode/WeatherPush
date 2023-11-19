@@ -8,16 +8,16 @@
         <result property="id" column="id"/>
         <result property="sendMail" column="send_mail"/>
         <result property="sendPassword" column="send_password"/>
-        <result property="nickName" column="nick_name"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <resultMap type="com.liu.weathermail.entity.po.UserInfoPO" id="UserInfoMap">
-        <result property="sendId" column="id"/>
+        <result property="sendId" column="send_id"/>
+        <result property="recId" column="rec_id"/>
         <result property="sendMail" column="send_mail"/>
         <result property="sendPassword" column="send_password"/>
-        <result property="nickName" column="nick_name"/>
+        <result property="recName" column="rec_name"/>
         <result property="recEmail" column="rec_email"/>
         <result property="recPhone" column="rec_phone"/>
         <result property="cityCode" column="city_code"/>
@@ -26,16 +26,16 @@
 
 
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.liu.weathermail.entity.SendUserEntity">
-        insert into send_user (send_mail, send_password,
-                               nick_name,create_time, update_time)
+        insert into send_user (send_mail, send_password,create_time, update_time)
         values (#{sendMail,jdbcType=VARCHAR}, #{sendPassword,jdbcType=INTEGER},
-                #{nickName,jdbcType=DECIMAL},#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+                #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
     <select id="selectUserInfo" resultType="com.liu.weathermail.entity.po.UserInfoPO">
-        select s.id,
+        select s.id as send_id,
                s.send_mail,
                s.send_password,
-               r.nick_name,
+               r.id as rec_id,
+               r.rec_name,
                r.rec_email,
                r.rec_phone,
                r.city_code,
@@ -43,7 +43,7 @@
         from send_user as s
                           left join rec_user as r
                                     on s.id=r.send_id
-        where s.status=1 and r.status=1 and r.rec_time =now()
+        where s.status=1 and r.status=1 and r.rec_time &lt;now()
     </select>
 
 

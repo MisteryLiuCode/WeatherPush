@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * All rights Reserved, Designed By misteryliu.
@@ -29,6 +30,7 @@ public class UserController {
     @PrintLog
     @RequestMapping("/saveUserInfo")
     public Boolean saveUserInfo(@RequestBody SaveUserInfoReq saveUserInfoReq){
+        saveUserInfoReq.setRecTime(new Date());
         return userService.saveUser(saveUserInfoReq);
     }
 }

@@ -24,6 +24,11 @@ public class DailyEntity implements Serializable {
 	 */
 	@TableId
 	private String id;
+
+	/**
+	 * 接收人id
+	 */
+	private String recId;
 	/**
 	 * 
 	 */

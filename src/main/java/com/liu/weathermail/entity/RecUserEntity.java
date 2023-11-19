@@ -37,6 +37,10 @@ public class RecUserEntity implements Serializable {
 	 */
 	private String recPhone;
 	/**
+	 * 接收人姓名
+	 */
+	private String recName;
+	/**
 	 * 城市id
 	 */
 	private String cityCode;

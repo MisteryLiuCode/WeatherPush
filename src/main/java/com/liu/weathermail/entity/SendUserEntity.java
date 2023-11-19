@@ -35,10 +35,6 @@ public class SendUserEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private String nickName;
-	/**
-	 * 
-	 */
 	private Date createTime;
 	/**
 	 * 

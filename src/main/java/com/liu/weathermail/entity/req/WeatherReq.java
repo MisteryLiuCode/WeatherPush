@@ -24,4 +24,6 @@ public class WeatherReq {
 
     private String recPhone;
 
+    private String recId;
+
 }

@@ -37,7 +37,6 @@ public class UserServiceImpl implements UserService {
         SendUserEntity sendUserEntity = new SendUserEntity();
         sendUserEntity.setSendMail(req.getSendMail());
         sendUserEntity.setSendPassword(req.getSendMail());
-        sendUserEntity.setNickName(req.getSendMail());
         sendUserEntity.setCreateTime(new Date());
         sendUserEntity.setUpdateTime(new Date());
         sendUserEntity.setStatus(StatusEnum.Y.getCode());

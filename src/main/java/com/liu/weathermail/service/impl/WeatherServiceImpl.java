@@ -86,12 +86,13 @@ public class WeatherServiceImpl implements WeatherService {
 
                 QueryWrapper<DailyEntity> wrapper = new QueryWrapper<>();
                 wrapper.eq("city_code",req.getCityCode())
-                        .orderByDesc("create_time");
+                        .orderByDesc("create_time")
+                        .eq("rec_id",req.getRecId());
                 List<DailyEntity> dailyEntities = dailyDao.selectList(wrapper);
 //                List<Daily> dailies = jdbcTemplate.query("select * from t_today_weather order by add_time desc",
 //                        rowMapper);
+                DailyEntity yesterday = dailyEntities.get(0);
                 if (!CollectionUtils.isEmpty(dailyEntities)) {
-                    DailyEntity yesterday = dailyEntities.get(0);
                     //                    判断两天的温差
                     Integer difTemp = Integer.parseInt(toDay.getTempMax()) - Integer.parseInt(yesterday.getTempMax());
                     log.info("今天和昨天温差为{}度", difTemp);
@@ -117,6 +118,7 @@ public class WeatherServiceImpl implements WeatherService {
 //                        toDay.getTextDay(), toDay.getWindDirDay(), toDay.getWindScaleDay(), new Date(), new Date(),
 //                        "定时插入今日天气", 1);
                 DailyEntity dailyEntity = new DailyEntity();
+                dailyEntity.setRecId(yesterday.getRecId());
                 dailyEntity.setFxDate(toDay.getFxDate());
                 dailyEntity.setCityCode(req.getCityCode());
                 dailyEntity.setTempMax(toDay.getTempMax());

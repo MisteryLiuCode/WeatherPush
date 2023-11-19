@@ -33,7 +33,9 @@ public class UserInfoPO {
     /**
      *
      */
-    private String nickName;
+    private String recName;
+
+    private String recId;
 
     /**
      * 接收人邮箱
