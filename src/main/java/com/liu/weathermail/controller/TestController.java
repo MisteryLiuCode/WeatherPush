@@ -1,14 +1,17 @@
 package com.liu.weathermail.controller;
 
 import cn.hutool.extra.mail.MailUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.liu.weathermail.annotation.PrintLog;
 import com.liu.weathermail.entity.Daily;
 import com.liu.weathermail.entity.TomorrowWeatherVO;
+import com.liu.weathermail.entity.req.SaveUserInfoReq;
 import com.liu.weathermail.utils.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -53,5 +56,11 @@ public class TestController {
             return "hello world";
         }
         return "fail";
+    }
+
+
+    @RequestMapping("/testLink")
+    public void testLink(@RequestBody SaveUserInfoReq saveUserInfoReq){
+        log.info("传入的参数为:{}", JSONObject.toJSONString(saveUserInfoReq));
     }
 }
