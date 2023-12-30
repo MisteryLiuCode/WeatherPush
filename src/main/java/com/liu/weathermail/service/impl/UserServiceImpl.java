@@ -1,14 +1,18 @@
 package com.liu.weathermail.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.liu.weathermail.dao.RecUserDao;
 import com.liu.weathermail.dao.SendUserDao;
 import com.liu.weathermail.entity.RecUserEntity;
 import com.liu.weathermail.entity.SendUserEntity;
 import com.liu.weathermail.entity.req.SaveRecUserInfoReq;
 import com.liu.weathermail.entity.req.SaveSendUserInfoReq;
+import com.liu.weathermail.enums.InsertOrUpdateEnum;
 import com.liu.weathermail.enums.StatusEnum;
 import com.liu.weathermail.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,17 +53,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean saveRecUser(SaveRecUserInfoReq req) {
         RecUserEntity recUserEntity = new RecUserEntity();
-        recUserEntity.setSendId(req.getSendId());
-        recUserEntity.setRecEmail(req.getRecEmail());
-        recUserEntity.setRecPhone(req.getRecPhone());
-        recUserEntity.setCityCode(req.getCityCode());
-        recUserEntity.setCityName(req.getCityName());
-        recUserEntity.setRecTime(req.getRecTime());
-        recUserEntity.setCreateTime(new Date());
-        recUserEntity.setUpdateTime(new Date());
-        recUserEntity.setStatus(StatusEnum.Y.getCode());
-        weatherService.saveTodayWeather(recUserEntity.getId(),req.getCityCode());
-        int insertRec = recUserDao.insert(recUserEntity);
-        return insertRec == 1;
+        BeanUtils.copyProperties(req,recUserEntity);
+        if (req.getInsertOrUpdate().equals(InsertOrUpdateEnum.INSERT.getCode())){
+            recUserEntity.setCreateTime(new Date());
+            recUserEntity.setUpdateTime(new Date());
+            recUserEntity.setStatus(StatusEnum.Y.getCode());
+            weatherService.saveTodayWeather(recUserEntity.getId(),req.getCityCode());
+            int insertRec = recUserDao.insert(recUserEntity);
+            return insertRec == 1;
+        }else {
+            recUserEntity.setUpdateTime(new Date());
+            QueryWrapper<RecUserEntity> queryWrapper = new QueryWrapper<>();
+            queryWrapper
+                    .select("id")
+                    .eq("recEmail", req.getRecEmail());//name包括i字母
+            RecUserEntity recUser = recUserDao.selectOne(queryWrapper);
+            recUserEntity.setId(recUser.getId());
+            int updateRec = recUserDao.updateById(recUserEntity);
+            return updateRec == 1;
+        }
     }
 }

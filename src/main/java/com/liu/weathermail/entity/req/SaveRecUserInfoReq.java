@@ -54,4 +54,10 @@ public class SaveRecUserInfoReq {
     */
     private Integer status;
 
+    /**
+     * 编辑或者新增
+     * @see com.liu.weathermail.enums.InsertOrUpdateEnum
+     */
+    private String insertOrUpdate;
+
 }
