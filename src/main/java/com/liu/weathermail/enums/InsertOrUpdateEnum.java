@@ -18,8 +18,8 @@ import java.util.List;
 @Getter
 public enum InsertOrUpdateEnum {
 
-    INSERT("1", "添加"),
-    UPDATE("2", "修改");
+    INSERT("0", "添加"),
+    UPDATE("1", "修改");
 
     private String code;
     private String desc;
