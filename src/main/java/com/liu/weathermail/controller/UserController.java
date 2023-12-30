@@ -1,6 +1,7 @@
 package com.liu.weathermail.controller;
 
 import com.liu.weathermail.annotation.PrintLog;
+import com.liu.weathermail.entity.req.SaveRecUserInfoReq;
 import com.liu.weathermail.entity.req.SaveSendUserInfoReq;
 import com.liu.weathermail.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,14 @@ public class UserController {
     private UserService userService;
 
     @PrintLog
-    @RequestMapping("/saveUserInfo")
-    public Boolean saveUserInfo(@RequestBody SaveSendUserInfoReq saveSendUserInfoReq){
-        return userService.saveSendUser(saveSendUserInfoReq);
+    @RequestMapping("/saveSendUserInfo")
+    public Boolean saveUserInfo(@RequestBody SaveSendUserInfoReq req){
+        return userService.saveSendUser(req);
+    }
+
+    @PrintLog
+    @RequestMapping("/saveRecUserInfo")
+    public Boolean saveRecUser(@RequestBody SaveRecUserInfoReq req){
+        return userService.saveRecUser(req);
     }
 }
