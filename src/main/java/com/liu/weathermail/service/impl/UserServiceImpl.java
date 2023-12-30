@@ -4,16 +4,15 @@ import com.liu.weathermail.dao.RecUserDao;
 import com.liu.weathermail.dao.SendUserDao;
 import com.liu.weathermail.entity.RecUserEntity;
 import com.liu.weathermail.entity.SendUserEntity;
-import com.liu.weathermail.entity.req.SaveUserInfoReq;
+import com.liu.weathermail.entity.req.SaveRecUserInfoReq;
+import com.liu.weathermail.entity.req.SaveSendUserInfoReq;
 import com.liu.weathermail.enums.StatusEnum;
 import com.liu.weathermail.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * All rights Reserved, Designed By misteryliu.
@@ -35,8 +34,7 @@ public class UserServiceImpl implements UserService {
     private WeatherServiceImpl weatherService;
 
     @Override
-
-    public Boolean saveUser(SaveUserInfoReq req) {
+    public Boolean saveSendUser(SaveSendUserInfoReq req) {
         SendUserEntity sendUserEntity = new SendUserEntity();
         sendUserEntity.setSendMail(req.getSendMail());
         sendUserEntity.setSendPassword(req.getSendMail());
@@ -45,8 +43,13 @@ public class UserServiceImpl implements UserService {
         sendUserEntity.setStatus(StatusEnum.Y.getCode());
         int insertSend = sendUserDao.insert(sendUserEntity);
 
+        return insertSend == 1;
+    }
+
+    @Override
+    public Boolean saveRecUser(SaveRecUserInfoReq req) {
         RecUserEntity recUserEntity = new RecUserEntity();
-        recUserEntity.setSendId(sendUserEntity.getId());
+        recUserEntity.setSendId(req.getSendId());
         recUserEntity.setRecEmail(req.getRecEmail());
         recUserEntity.setRecPhone(req.getRecPhone());
         recUserEntity.setCityCode(req.getCityCode());
@@ -55,9 +58,8 @@ public class UserServiceImpl implements UserService {
         recUserEntity.setCreateTime(new Date());
         recUserEntity.setUpdateTime(new Date());
         recUserEntity.setStatus(StatusEnum.Y.getCode());
-        int insertRec = recUserDao.insert(recUserEntity);
-
         weatherService.saveTodayWeather(recUserEntity.getId(),req.getCityCode());
-        return insertSend == 1 && insertRec == 1;
+        int insertRec = recUserDao.insert(recUserEntity);
+        return insertRec == 1;
     }
 }

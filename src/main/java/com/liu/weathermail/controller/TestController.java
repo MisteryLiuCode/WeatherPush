@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.liu.weathermail.annotation.PrintLog;
 import com.liu.weathermail.entity.Daily;
 import com.liu.weathermail.entity.TomorrowWeatherVO;
-import com.liu.weathermail.entity.req.SaveUserInfoReq;
+import com.liu.weathermail.entity.req.SaveSendUserInfoReq;
 import com.liu.weathermail.utils.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration.Configuration;
@@ -60,7 +60,7 @@ public class TestController {
 
 
     @RequestMapping("/testLink")
-    public void testLink(@RequestBody SaveUserInfoReq saveUserInfoReq){
-        log.info("传入的参数为:{}", JSONObject.toJSONString(saveUserInfoReq));
+    public void testLink(@RequestBody SaveSendUserInfoReq saveSendUserInfoReq){
+        log.info("传入的参数为:{}", JSONObject.toJSONString(saveSendUserInfoReq));
     }
 }

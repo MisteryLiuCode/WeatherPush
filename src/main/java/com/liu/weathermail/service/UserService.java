@@ -1,6 +1,7 @@
 package com.liu.weathermail.service;
 
-import com.liu.weathermail.entity.req.SaveUserInfoReq;
+import com.liu.weathermail.entity.req.SaveRecUserInfoReq;
+import com.liu.weathermail.entity.req.SaveSendUserInfoReq;
 
 /**
  * 
@@ -11,7 +12,11 @@ import com.liu.weathermail.entity.req.SaveUserInfoReq;
  */
 public interface UserService {
 
-    Boolean saveUser(SaveUserInfoReq req);
+    Boolean saveSendUser(SaveSendUserInfoReq req);
+    Boolean saveRecUser(SaveRecUserInfoReq req);
+
+
+
 
 
 }

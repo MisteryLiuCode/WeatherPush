@@ -12,17 +12,12 @@ import java.util.Date;
  */
 
 @Data
-public class SaveUserInfoReq {
+public class SaveRecUserInfoReq {
 
-    /*
-    发送人邮箱
+    /**
+     * 发送人id
      */
-    private String sendMail;
-
-    /*
-    发送人密码
-     */
-    private String sendPassword;
+    private String sendId;
 
     /*
     接收人昵称
@@ -53,5 +48,10 @@ public class SaveUserInfoReq {
     城市名称
      */
     private String cityName;
+
+    /*
+    是否开启 1:开启 0:关闭
+    */
+    private Integer status;
 
 }
