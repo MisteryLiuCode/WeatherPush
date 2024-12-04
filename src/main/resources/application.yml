@@ -2,9 +2,9 @@ server:
   port: 49030
 spring:
   datasource:
-    url: jdbc:mysql://101.43.145.108:3306/weather?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/person?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     driverClassName: com.mysql.cj.jdbc.Driver
-    username: weather
+    username: root
     password: l198923.
 mybatis:
   type-aliases-package: com.liu.weathermail.entity

@@ -1,7 +1,6 @@
 package com.liu.weathermail.schedule;
 
 import cn.hutool.extra.mail.MailUtil;
-import com.alibaba.fastjson.JSON;
 import com.liu.weathermail.annotation.PrintLog;
 import com.liu.weathermail.entity.*;
 import com.liu.weathermail.utils.ConfigUtil;
@@ -164,7 +163,6 @@ public class WeatherJob {
              */
         String warningUrl = ConfigUtil.getWarningUrl(weatherConfig);
         ResponseEntity<WarningVO> warningRes = restTemplate.getForEntity(warningUrl, WarningVO.class);
-        log.info(JSON.toJSONString(warningRes.getBody().getWarning()));
         List<Warning> warningList = warningRes.getBody().getWarning();
         if (warningList.size()>0){
             for (Warning warning : warningList) {

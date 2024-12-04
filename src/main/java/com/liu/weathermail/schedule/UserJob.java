@@ -1,7 +1,6 @@
 package com.liu.weathermail.schedule;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
 import com.liu.weathermail.annotation.PrintLog;
 import com.liu.weathermail.dao.SendUserDao;
 import com.liu.weathermail.entity.po.UserInfoPO;
@@ -42,11 +41,10 @@ public class UserJob {
      * @return void
      * @since 2023/11/19 13:54 by misteryliu
      **/
-    @Scheduled(cron = "0 */1 * * * ?")
+//    @Scheduled(cron = "0 */1 * * * ?")
     @PrintLog
     public void getUserInfo(){
         List<UserInfoPO> userInfoPOS = sendUserDao.selectUserInfo();
-        log.info("要执行的用户集合:{}", JSONObject.toJSONString(userInfoPOS));
         if (!CollectionUtils.isEmpty(userInfoPOS)){
             for (UserInfoPO userInfoPO : userInfoPOS) {
                 WeatherReq weatherReq = new WeatherReq();

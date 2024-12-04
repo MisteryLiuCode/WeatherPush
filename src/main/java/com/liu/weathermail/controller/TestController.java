@@ -1,7 +1,6 @@
 package com.liu.weathermail.controller;
 
 import cn.hutool.extra.mail.MailUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.liu.weathermail.annotation.PrintLog;
 import com.liu.weathermail.entity.Daily;
 import com.liu.weathermail.entity.TomorrowWeatherVO;
@@ -61,6 +60,5 @@ public class TestController {
 
     @RequestMapping("/testLink")
     public void testLink(@RequestBody SaveSendUserInfoReq saveSendUserInfoReq){
-        log.info("传入的参数为:{}", JSONObject.toJSONString(saveSendUserInfoReq));
     }
 }

@@ -1,6 +1,5 @@
 package com.liu.weathermail;
 
-import com.alibaba.fastjson.JSON;
 import com.liu.weathermail.entity.*;
 import com.liu.weathermail.entity.req.WeatherReq;
 import com.liu.weathermail.service.impl.WeatherServiceImpl;
@@ -254,7 +253,6 @@ class WeatherMailApplicationTests {
                     "&" + "lang=zh" +
                     "&" + "key=" + key;
             ResponseEntity<WarningVO> res = restTemplate.getForEntity(resUrl, WarningVO.class);
-            log.info(JSON.toJSONString(res.getBody().getWarning()));
         }
     }
 
